@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — Gesen</title>
+<script>
+  // Lightweight prototype gate: if this browser session hasn't signed in,
+  // bounce to the login page before the protected page paints. This is a
+  // UX gate only -- a static site can't truly enforce access control
+  // client-side; real gating will need a server/backend check later.
+  if (sessionStorage.getItem('gesenAuthed') !== 'true') {
+    location.replace('0-login.html');
+  }
+</script>
+<script>
+  // Applies a saved accent color before paint so pages don't flash the
+  // default brand color on load. Set from Settings > Branding.
+  (function() {
+    try {
+      var saved = localStorage.getItem('gesenBrandColor');
+      if (saved) document.documentElement.style.setProperty('--brand', saved);
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="sidebar-scrim" id="sidebarScrim"></div>
+
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="logo">
+        <span class="logo-mark">G</span>
+        <span class="logo-text"><strong>GESEN</strong><span class="logo-sub">Arcade Management</span></span>
+      </a>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">✕</button>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-top">
+        <a href="index.html" class="nav-link-home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
+          Dashboard
+        </a>
+        <a href="settings.html" class="nav-link-home">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.5 1z"/></svg>
+          Settings
+        </a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Admin</div>
+        <ul class="nav-list">
+          <li><a href="1-financials.html" class="nav-link">Financials</a></li>
+          <li><a href="1-staff.html" class="nav-link">Staff</a></li>
+          <li><a href="1-vendors.html" class="nav-link">Vendors</a></li>
+          <li><a href="1-arcadeinfo.html" class="nav-link">Arcade Info</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Operations</div>
+        <ul class="nav-list">
+          <li><a href="2-cabinets.html" class="nav-link">Cabinets</a></li>
+          <li><a href="2-playcards.html" class="nav-link">Play Cards</a></li>
+          <li><a href="2-prizeinventory.html" class="nav-link">Prize Inventory</a></li>
+          <li><a href="2-workorders.html" class="nav-link">Work Orders</a></li>
+          <li><a href="2-partssupplies.html" class="nav-link">Parts &amp; Supplies</a></li>
+        </ul>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-label">Community</div>
+        <ul class="nav-list">
+          <li><a href="3-community-placeholder.html" class="nav-link">Placeholder</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="location-pill">
+        <span class="dot"></span>
+        Riverside Arcade
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-col">
+    <header class="topbar">
+      <button class="hamburger" id="sidebarOpen" aria-label="Open menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+      <div class="topbar-brand">G</div>
+      <div class="profile-menu" id="profileMenu">
+        <button class="profile-btn" id="profileTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+          <span class="avatar-placeholder" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+          </span>
+          <span class="profile-btn-name">Sam Rivera</span>
+          <svg class="profile-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="profile-dropdown">
+          <div class="profile-dropdown-head">
+            <span class="avatar-placeholder md" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+            </span>
+            <div>
+              <div class="profile-dropdown-name">Sam Rivera</div>
+              <div class="profile-dropdown-email">sam@riversidearcade.com</div>
+            </div>
+          </div>
+          <ul class="profile-dropdown-list">
+            <li><a href="0-profile.html">View Profile</a></li>
+            <li><a href="0-help.html">Help</a></li>
+          </ul>
+          <div class="profile-dropdown-footer">
+            <button type="button" class="sign-out-link" id="signOutBtn">Sign Out</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+    <div class="page-header">
+      <div>
+        <p class="eyebrow">Configuration</p>
+        <h1>Settings</h1>
+        <p class="page-sub">Choose which tabs are available in this Gesen instance. Each client can run a different set of features.</p>
+      </div>
+    </div>
+
+    <div class="settings-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 11h1v5h1"/></svg>
+      <div>
+        Most feature toggles aren't wired up yet, so those tabs are marked <strong>Unavailable</strong>. <strong>Arcade Info</strong> is live — flip its switch to show or hide it in the sidebar for this instance. <strong>Dashboard</strong> and <strong>Settings</strong> are core pages and always stay on.
+      </div>
+    </div>
+
+    <div class="settings-stack">
+
+      <div class="panel">
+        <div class="panel-head"><h2>Admin</h2></div>
+
+        <div class="settings-row" id="financials">
+          <div class="settings-row-main">
+            <div class="settings-row-title">Financials</div>
+            <div class="settings-row-desc">Coin-in, card revenue, and per-cabinet performance trends.</div>
+          </div>
+          <div class="settings-row-controls">
+            <span class="badge-unavailable">Unavailable</span>
+            <label class="switch disabled">
+              <input type="checkbox" disabled>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row" id="staff">
+          <div class="settings-row-main">
+            <div class="settings-row-title">Staff</div>
+            <div class="settings-row-desc">Staff directory, technician coverage, and ticket resolution time.</div>
+          </div>
+          <div class="settings-row-controls">
+            <span class="badge-unavailable">Unavailable</span>
+            <label class="switch disabled">
+              <input type="checkbox" disabled>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row" id="vendors">
+          <div class="settings-row-main">
+            <div class="settings-row-title">Vendors</div>
+            <div class="settings-row-desc">Distributor contacts, lease and revenue-share terms, and warranty windows.</div>
+          </div>
+          <div class="settings-row-controls">
+            <span class="badge-unavailable">Unavailable</span>
+            <label class="switch disabled">
+              <input type="checkbox" disabled>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row" id="arcade-info">
+          <div class="settings-row-main">
+            <div class="settings-row-title">Arcade Info</div>
+            <div class="settings-row-desc">Identity, location, and operations details owners can fill in for each arcade they run.</div>
+          </div>
+          <div class="settings-row-controls">
+            <span class="badge-available">Available</span>
+            <label class="switch">
+              <input type="checkbox" id="arcadeInfoToggle" data-feature="arcadeInfo" checked>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Operations</h2></div>
+
+        <div class="settings-row" id="cabinets">
+          <div class="settings-row-main">
+            <div class="settings-row-title">Cabinets</div>
+            <div class="settings-row-desc">Fleet-wide rollup of status, uptime, value, and age for every cabinet.</div>
+          </div>
+          <div class="settings-row-controls">
+            <span class="badge-unavailable">Unavailable</span>
+            <label class="switch disabled">
+              <input type="checkbox" disabled>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row" id="play-cards">
+          <div class="settings-row-main">
+            <div class="settings-row-title">Play Cards</div>
+            <div class="settings-row-desc">Card balances, replacements, merges, and refunds for player accounts.</div>
+          </div>
+          <div class="settings-row-controls">
+            <span class="badge-unavailable">Unavailable</span>
+            <label class="switch disabled">
+              <input type="checkbox" disabled>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row" id="prize-inventory">
+          <div class="settings-row-main">
+            <div class="settings-row-title">Prize Inventory</div>
+            <div class="settings-row-desc">Prize stock counts, ticket values, and low-stock alerts for the redemption counter.</div>
+          </div>
+          <div class="settings-row-controls">
+            <span class="badge-unavailable">Unavailable</span>
+            <label class="switch disabled">
+              <input type="checkbox" disabled>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row" id="work-orders">
+          <div class="settings-row-main">
+            <div class="settings-row-title">Work Orders</div>
+            <div class="settings-row-desc">Repair ticket queue — log, assign, and resolve issues from the floor.</div>
+          </div>
+          <div class="settings-row-controls">
+            <span class="badge-unavailable">Unavailable</span>
+            <label class="switch disabled">
+              <input type="checkbox" disabled>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-row" id="parts-supplies">
+          <div class="settings-row-main">
+            <div class="settings-row-title">Parts &amp; Supplies</div>
+            <div class="settings-row-desc">Spare parts inventory, reorder thresholds, and usage tied to work orders.</div>
+          </div>
+          <div class="settings-row-controls">
+            <span class="badge-unavailable">Unavailable</span>
+            <label class="switch disabled">
+              <input type="checkbox" disabled>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Community</h2></div>
+
+        <div class="settings-row" id="community-placeholder">
+          <div class="settings-row-main">
+            <div class="settings-row-title">Placeholder</div>
+            <div class="settings-row-desc">Planned as a standalone mobile app rather than a page on this site.</div>
+          </div>
+          <div class="settings-row-controls">
+            <span class="badge-unavailable">Unavailable</span>
+            <label class="switch disabled">
+              <input type="checkbox" disabled>
+              <span class="switch-track"><span class="switch-thumb"></span></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

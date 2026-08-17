@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — Gesen</title>
+<script>
+  // Applies a saved accent color before paint so pages don't flash the
+  // default brand color on load. Set from Settings > Branding.
+  (function() {
+    try {
+      var saved = localStorage.getItem('gesenBrandColor');
+      if (saved) document.documentElement.style.setProperty('--brand', saved);
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body">
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <span class="logo-mark">G</span>
+      <span class="logo-text"><strong>GESEN</strong><span class="logo-sub">Arcade Management</span></span>
+    </div>
+
+    <div class="bulbs auth-bulbs" aria-hidden="true">
+      <span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+      <span class="bulb warn"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span>
+      <span class="bulb"></span><span class="bulb"></span>
+    </div>
+
+    <h1>Sign in</h1>
+    <p class="auth-sub">Enter your details to access your Gesen dashboard.</p>
+
+    <form id="loginForm" novalidate>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@arcade.com" autocomplete="username">
+      </div>
+
+      <div class="field">
+        <div class="field-label-row">
+          <label for="password">Password</label>
+          <a href="#" class="reset-link">Reset password</a>
+        </div>
+        <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="btn-primary">Sign In</button>
+    </form>
+  </div>
+
+  <p class="auth-footnote">Gesen Arcade Management — internal preview</p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
