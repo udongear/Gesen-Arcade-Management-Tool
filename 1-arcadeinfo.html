@@ -40,6 +40,24 @@
       <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">✕</button>
     </div>
 
+    <div class="sidebar-arcade">
+      <div class="arcade-menu" id="arcadeMenu">
+        <button class="arcade-trigger location-pill" id="arcadeTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+          <span class="dot"></span>
+          <span class="arcade-trigger-name">Riverside Arcade</span>
+          <svg class="arcade-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="arcade-dropdown">
+          <ul class="arcade-dropdown-list">
+            <li><a href="#" class="arcade-option active"><span class="dot"></span><span class="arcade-option-name">Riverside Arcade</span></a></li>
+            <li><a href="#" class="arcade-option"><span class="dot dot-muted"></span>Bobacade</a></li>
+            <li><a href="#" class="arcade-option"><span class="dot dot-muted"></span>Jackcade</a></li>
+            <li><a href="#" class="arcade-option"><span class="dot dot-muted"></span>Cephycade</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <nav class="nav">
       <div class="nav-top">
         <a href="index.html" class="nav-link-home">
@@ -55,6 +73,7 @@
       <div class="nav-group">
         <div class="nav-group-label">Admin</div>
         <ul class="nav-list">
+          <li><a href="1-metrics.html" class="nav-link">Metrics</a></li>
           <li><a href="1-financials.html" class="nav-link">Financials</a></li>
           <li><a href="1-staff.html" class="nav-link">Staff</a></li>
           <li><a href="1-vendors.html" class="nav-link">Vendors</a></li>
@@ -84,13 +103,6 @@
         </ul>
       </div>
     </nav>
-
-    <div class="sidebar-footer">
-      <div class="location-pill">
-        <span class="dot"></span>
-        Riverside Arcade
-      </div>
-    </div>
   </aside>
 
   <div class="main-col">
@@ -128,7 +140,7 @@
       </div>
     </header>
 
-    <main class="content">
+    <main class="content content-wide">
     <div class="page-header">
       <div>
         <p class="eyebrow">Admin</p>
@@ -207,16 +219,6 @@
                 <input type="email" id="arcadeEmail" name="arcadeEmail" placeholder="hello@riversidearcade.com">
               </div>
 
-              <div class="field field-full">
-                <label for="arcadeWebsite">Public Website URL</label>
-                <input type="url" id="arcadeWebsite" name="arcadeWebsite" placeholder="https://riversidearcade.com">
-              </div>
-
-              <div class="field field-full">
-                <label for="arcadeHours">Operation Hours</label>
-                <textarea id="arcadeHours" name="arcadeHours" rows="3" placeholder="Mon–Thu 12pm–10pm, Fri–Sat 12pm–midnight, Sun 12pm–8pm"></textarea>
-              </div>
-
               <div class="field">
                 <label for="arcadeTimezone">Timezone</label>
                 <select id="arcadeTimezone" name="arcadeTimezone">
@@ -235,6 +237,16 @@
                   <option value="Japan Standard Time (JST)">Japan Standard Time (JST)</option>
                   <option value="Australian Eastern Time (AET)">Australian Eastern Time (AET)</option>
                 </select>
+              </div>
+
+              <div class="field field-full">
+                <label for="arcadeWebsite">Public Website URL</label>
+                <input type="url" id="arcadeWebsite" name="arcadeWebsite" placeholder="https://riversidearcade.com">
+              </div>
+
+              <div class="field field-full">
+                <label for="arcadeHours">Operation Hours</label>
+                <textarea id="arcadeHours" name="arcadeHours" rows="3" placeholder="Mon–Thu 12pm–10pm, Fri–Sat 12pm–midnight, Sun 12pm–8pm"></textarea>
               </div>
 
             </div>

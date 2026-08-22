@@ -10,11 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileSidebar();
   animateMetrics();
   initProfileMenu();
+  initArcadeMenu();
   initLoginForm();
   applyArcadeBranding();
+  applyProfileBranding();
   applyFeatureVisibility();
   initFeatureToggles();
   initArcadeInfoForm();
+  initProfileForm();
 });
 
 /* ---------------------------------------------------------------------
@@ -129,6 +132,44 @@ function initProfileMenu() {
 }
 
 /* ---------------------------------------------------------------------
+   Arcade switcher — sits above "Dashboard" at the top of the sidebar.
+   Same open/close pattern as the profile menu. The listed arcades
+   (besides the current one) are dummy placeholders for now, so their
+   links are clickable but intentionally don't navigate anywhere.
+   --------------------------------------------------------------------- */
+function initArcadeMenu() {
+  const menu = document.getElementById('arcadeMenu');
+  const trigger = document.getElementById('arcadeTrigger');
+  if (!menu || !trigger) return;
+
+  const close = () => {
+    menu.classList.remove('open');
+    trigger.setAttribute('aria-expanded', 'false');
+  };
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = menu.classList.toggle('open');
+    trigger.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!menu.contains(e.target)) close();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') close();
+  });
+
+  menu.querySelectorAll('.arcade-option').forEach((option) => {
+    option.addEventListener('click', (e) => {
+      e.preventDefault();
+      close();
+    });
+  });
+}
+
+/* ---------------------------------------------------------------------
    Sign-in form (0-login.html). Fields aren't validated against a real
    account yet — submitting just marks the session as signed in and
    sends the person into the dashboard.
@@ -167,20 +208,44 @@ function applyArcadeBranding() {
       }
     });
 
-    document.querySelectorAll('.location-pill').forEach((pill) => {
-      const dot = pill.querySelector('.dot');
-      if (!dot) return;
-
-      dot.classList.remove('dot-warn', 'dot-brand', 'dot-bad');
-      if (status === 'temporarily-closed') dot.classList.add('dot-warn');
-      else if (status === 'coming-soon') dot.classList.add('dot-brand');
-      else if (status === 'closed') dot.classList.add('dot-bad');
-
-      if (name) {
-        pill.textContent = '';
-        pill.appendChild(dot);
-        pill.appendChild(document.createTextNode(name));
+    // The arcade-switcher trigger (top of sidebar) and its own "active"
+    // entry in the dropdown both represent the current arcade, so both
+    // get the saved name/status. Only the dot + name text update -- the
+    // trigger's chevron and the option's markup are left alone.
+    const applyToArcadeName = (container) => {
+      const dot = container.querySelector('.dot');
+      if (dot) {
+        dot.classList.remove('dot-warn', 'dot-brand', 'dot-bad');
+        if (status === 'temporarily-closed') dot.classList.add('dot-warn');
+        else if (status === 'coming-soon') dot.classList.add('dot-brand');
+        else if (status === 'closed') dot.classList.add('dot-bad');
       }
+      const nameEl = container.querySelector('.arcade-trigger-name, .arcade-option-name');
+      if (name && nameEl) nameEl.textContent = name;
+    };
+
+    document.querySelectorAll('.arcade-trigger').forEach(applyToArcadeName);
+    document.querySelectorAll('.arcade-option.active').forEach(applyToArcadeName);
+  } catch (e) {}
+}
+
+// Default person-silhouette icon shown until a profile photo is set --
+// same markup already inlined on every page's topbar/profile-dropdown
+// avatar, kept here once so it can be restored after a photo is removed.
+const DEFAULT_AVATAR_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>';
+
+/* ---------------------------------------------------------------------
+   Profile photo — sitewide branding
+   Reflects the photo uploaded on the Profile page everywhere the
+   generic person-icon avatar shows up: the topbar button, the profile
+   dropdown, and the Profile page's own preview. Falls back to the
+   default icon when nothing has been uploaded yet. Runs on every page.
+   --------------------------------------------------------------------- */
+function applyProfileBranding() {
+  try {
+    const photo = localStorage.getItem('gesenProfilePhoto');
+    document.querySelectorAll('.profile-menu .avatar-placeholder, .js-profile-photo').forEach((el) => {
+      el.innerHTML = photo ? '<img src="' + photo + '" alt="">' : DEFAULT_AVATAR_SVG;
     });
   } catch (e) {}
 }
@@ -224,7 +289,7 @@ function initFeatureToggles() {
       const row = input.closest('.settings-row');
       const badge = row ? row.querySelector('.badge-available, .badge-unavailable') : null;
       if (badge) {
-        badge.textContent = input.checked ? 'Available' : 'Disabled';
+        badge.textContent = input.checked ? 'Enabled' : 'Disabled';
         badge.className = input.checked ? 'badge-available' : 'badge-unavailable';
       }
 
@@ -380,6 +445,83 @@ function initArcadeInfoForm() {
 
     applyArcadeBranding();
     renderStatusPreview();
+
+    if (saveStatus) {
+      saveStatus.classList.add('show');
+      clearTimeout(saveStatus._hideTimer);
+      saveStatus._hideTimer = setTimeout(() => saveStatus.classList.remove('show'), 2400);
+    }
+  });
+}
+
+/* ---------------------------------------------------------------------
+   Profile page (0-profile.html) — only Profile Photo and Pronouns are
+   actually editable here; everything else on the page is a read-only
+   "TBD" stand-in for data that will eventually sync from the Staff
+   Directory, so there's nothing else to load or save.
+   --------------------------------------------------------------------- */
+function initProfileForm() {
+  const form = document.getElementById('profileForm');
+  if (!form) return;
+
+  // ---- Pronouns ----
+  const pronounsInput = document.getElementById('profilePronouns');
+  if (pronounsInput) {
+    const saved = localStorage.getItem('gesenProfilePronouns');
+    if (saved !== null) pronounsInput.value = saved;
+  }
+
+  // ---- Profile photo ----
+  const photoInput = document.getElementById('profilePhoto');
+  const photoPreview = document.getElementById('profilePhotoPreview');
+  const removePhotoBtn = document.getElementById('removePhotoBtn');
+  let pendingPhoto = localStorage.getItem('gesenProfilePhoto');
+
+  function renderPhotoPreview() {
+    if (!photoPreview) return;
+    photoPreview.innerHTML = pendingPhoto ? '<img src="' + pendingPhoto + '" alt="">' : DEFAULT_AVATAR_SVG;
+    if (removePhotoBtn) removePhotoBtn.style.display = pendingPhoto ? '' : 'none';
+  }
+  renderPhotoPreview();
+
+  if (photoInput) {
+    photoInput.addEventListener('change', () => {
+      const file = photoInput.files && photoInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        pendingPhoto = reader.result;
+        renderPhotoPreview();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  if (removePhotoBtn) {
+    removePhotoBtn.addEventListener('click', () => {
+      pendingPhoto = null;
+      if (photoInput) photoInput.value = '';
+      renderPhotoPreview();
+    });
+  }
+
+  // ---- Save ----
+  const saveStatus = document.getElementById('profileSaveStatus');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    try {
+      if (pronounsInput) localStorage.setItem('gesenProfilePronouns', pronounsInput.value);
+
+      if (pendingPhoto) {
+        localStorage.setItem('gesenProfilePhoto', pendingPhoto);
+      } else {
+        localStorage.removeItem('gesenProfilePhoto');
+      }
+    } catch (err) {}
+
+    applyProfileBranding();
 
     if (saveStatus) {
       saveStatus.classList.add('show');

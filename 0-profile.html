@@ -40,6 +40,24 @@
       <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">✕</button>
     </div>
 
+    <div class="sidebar-arcade">
+      <div class="arcade-menu" id="arcadeMenu">
+        <button class="arcade-trigger location-pill" id="arcadeTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+          <span class="dot"></span>
+          <span class="arcade-trigger-name">Riverside Arcade</span>
+          <svg class="arcade-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="arcade-dropdown">
+          <ul class="arcade-dropdown-list">
+            <li><a href="#" class="arcade-option active"><span class="dot"></span><span class="arcade-option-name">Riverside Arcade</span></a></li>
+            <li><a href="#" class="arcade-option"><span class="dot dot-muted"></span>Bobacade</a></li>
+            <li><a href="#" class="arcade-option"><span class="dot dot-muted"></span>Jackcade</a></li>
+            <li><a href="#" class="arcade-option"><span class="dot dot-muted"></span>Cephycade</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <nav class="nav">
       <div class="nav-top">
         <a href="index.html" class="nav-link-home">
@@ -55,6 +73,7 @@
       <div class="nav-group">
         <div class="nav-group-label">Admin</div>
         <ul class="nav-list">
+          <li><a href="1-metrics.html" class="nav-link">Metrics</a></li>
           <li><a href="1-financials.html" class="nav-link">Financials</a></li>
           <li><a href="1-staff.html" class="nav-link">Staff</a></li>
           <li><a href="1-vendors.html" class="nav-link">Vendors</a></li>
@@ -84,13 +103,6 @@
         </ul>
       </div>
     </nav>
-
-    <div class="sidebar-footer">
-      <div class="location-pill">
-        <span class="dot"></span>
-        Riverside Arcade
-      </div>
-    </div>
   </aside>
 
   <div class="main-col">
@@ -136,25 +148,130 @@
       </div>
     </div>
 
-    <div class="profile-summary">
-      <span class="avatar-placeholder lg" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>
-      </span>
-      <div>
-        <div class="profile-summary-name">Sam Rivera</div>
-        <div class="profile-summary-meta">
-          <span class="role-badge">Owner</span>
-          <span>sam@riversidearcade.com</span>
-        </div>
-      </div>
-    </div>
+    <form id="profileForm" novalidate>
+      <div class="settings-stack">
 
-    <div class="empty-state">
-      <div class="empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+        <div class="profile-columns">
+
+        <div class="panel form-panel">
+          <div class="panel-head"><h2>Identity</h2></div>
+          <div class="form-body">
+            <div class="form-grid">
+
+              <div class="field field-full">
+                <label for="profilePhoto">Profile Photo</label>
+                <div class="logo-upload">
+                  <span class="avatar-placeholder lg js-profile-photo" id="profilePhotoPreview" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+                  </span>
+                  <div class="logo-upload-actions">
+                    <label class="btn-secondary" for="profilePhoto">Upload photo</label>
+                    <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*" class="visually-hidden">
+                    <button type="button" class="btn-text-danger" id="removePhotoBtn" style="display:none">Remove photo</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Full Name</label>
+                <div class="field-static">TBD</div>
+              </div>
+
+              <div class="field">
+                <label for="profilePronouns">Pronouns</label>
+                <input type="text" id="profilePronouns" name="profilePronouns" placeholder="Optional">
+              </div>
+
+              <div class="field">
+                <label>Job Title</label>
+                <div class="field-static">TBD</div>
+              </div>
+
+            </div>
+            <div class="field-hint">Full Name and Job Title will sync from the Staff Directory once it's live. Profile Photo and Pronouns are yours to set now.</div>
+          </div>
+        </div>
+
+        <div class="panel form-panel">
+          <div class="panel-head"><h2>Employee Details</h2></div>
+          <div class="form-body">
+            <div class="form-grid">
+
+               <div class="field">
+                <label>Start Date</label>
+                <div class="field-static">TBD</div>
+              </div>
+              
+              <div class="field">
+                <label>Direct Reports</label>
+                <div class="field-static">TBD</div>
+              </div>
+              
+              <div class="field">
+                <label>Work Location(s)</label>
+                <div class="field-static">TBD</div>
+              </div>
+
+              <div class="field">
+                <label>Roles</label>
+                <div class="field-static">TBD</div>
+              </div>
+              
+              <div class="field">
+                <label>Work Email</label>
+                <div class="field-static">TBD</div>
+              </div>
+
+              <div class="field">
+                <label>Staff ID</label>
+                <div class="field-static">TBD</div>
+              </div>
+
+            </div>
+            <div class="field-hint">Pulled from the Staff Directory once it's live — used for contact info, work order assignment, and site access.</div>
+          </div>
+        </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-save">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+            Save Changes
+          </button>
+          <br><br><br><br>
+          <span class="save-status" id="profileSaveStatus">Saved</span>
+        </div>
+
       </div>
-      <h2>Profile editing is on the way</h2>
-      <p>Soon you'll be able to update your name, photo, contact details, and notification preferences right from here.</p>
+    </form>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Security</h2></div>
+
+      <a href="#" class="settings-row profile-link-row">
+        <div class="settings-row-main">
+          <div class="settings-row-title">Login History</div>
+          <div class="settings-row-desc">Review recent sign-ins to your account.</div>
+        </div>
+        <svg class="profile-link-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+
+      <a href="#" class="settings-row profile-link-row">
+        <div class="settings-row-main">
+          <div class="settings-row-title">Change Password</div>
+          <div class="settings-row-desc">Update the password used to sign in.</div>
+        </div>
+        <svg class="profile-link-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
+
+      <a href="#" class="settings-row profile-link-row">
+        <div class="settings-row-main">
+          <div class="settings-row-title">Multi-Factor Authentication</div>
+          <div class="settings-row-desc">Add a second step to verify it's really you at sign-in.</div>
+        </div>
+        <svg class="profile-link-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>
+      </a>
     </div>
   </main>
   </div>

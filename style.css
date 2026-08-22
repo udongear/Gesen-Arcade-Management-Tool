@@ -11,7 +11,7 @@
 :root {
   /* Surfaces */
   --bg: #14161b;
-  --surface: #1c1f26;
+  --surface: #2f3138;
   --surface-raised: #242832;
   --surface-hover: #2b303b;
   --border: #2e323c;
@@ -95,10 +95,11 @@ button { font-family: inherit; cursor: pointer; }
   border-right: 1px solid var(--border-soft);
   display: flex;
   flex-direction: column;
-  height: 100vh;
   position: sticky;
   top: 0;
-  overflow-y: auto;
+  /* No overflow-y here -- the sidebar has no scroll region of its own.
+     It scrolls with the page (position: sticky keeps it pinned to the
+     viewport for as long as the page has more to show). */
 }
 
 .sidebar-header {
@@ -229,11 +230,6 @@ button { font-family: inherit; cursor: pointer; }
   font-weight: 500;
 }
 
-.sidebar-footer {
-  padding: 16px 20px 20px;
-  border-top: 1px solid var(--border-soft);
-}
-
 .location-pill {
   display: flex;
   align-items: center;
@@ -248,7 +244,8 @@ button { font-family: inherit; cursor: pointer; }
   overflow-wrap: anywhere;
 }
 
-.location-pill .dot {
+.location-pill .dot,
+.arcade-option .dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
@@ -256,9 +253,90 @@ button { font-family: inherit; cursor: pointer; }
   flex-shrink: 0;
 }
 
-.location-pill .dot.dot-warn { background: var(--warn); }
-.location-pill .dot.dot-brand { background: var(--brand); }
-.location-pill .dot.dot-bad { background: var(--bad); }
+.location-pill .dot.dot-warn, .arcade-option .dot.dot-warn { background: var(--warn); }
+.location-pill .dot.dot-brand, .arcade-option .dot.dot-brand { background: var(--brand); }
+.location-pill .dot.dot-bad, .arcade-option .dot.dot-bad { background: var(--bad); }
+.arcade-option .dot.dot-muted { background: var(--text-faint); }
+
+/* ---------------------------------------------------------------------
+   Arcade switcher — sits above "Dashboard" at the top of the sidebar.
+   Same open/close pattern as the profile menu: toggle .open on the
+   wrapper, CSS shows/hides the dropdown panel.
+   --------------------------------------------------------------------- */
+
+.sidebar-arcade {
+  padding: 14px 20px 0;
+}
+
+.arcade-menu {
+  position: relative;
+}
+
+.arcade-trigger {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+}
+
+.arcade-trigger:hover { background: var(--surface-hover); border-color: var(--border); color: var(--text); }
+
+.arcade-trigger-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.arcade-chevron {
+  width: 13px;
+  height: 13px;
+  color: var(--text-faint);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.arcade-menu.open .arcade-chevron { transform: rotate(180deg); }
+
+.arcade-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  padding: 6px;
+  display: none;
+  z-index: 25;
+}
+
+.arcade-menu.open .arcade-dropdown { display: block; }
+
+.arcade-dropdown-list { padding: 0; margin: 0; list-style: none; }
+
+.arcade-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.arcade-option:hover { background: var(--surface-hover); color: var(--text); }
+
+.arcade-option.active {
+  background: var(--brand-tint);
+  color: var(--brand);
+  font-weight: 500;
+}
 
 /* ---------------------------------------------------------------------
    Mobile top bar / hamburger
@@ -360,9 +438,11 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .avatar-placeholder svg { width: 15px; height: 15px; }
+.avatar-placeholder img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .avatar-placeholder.lg { width: 52px; height: 52px; }
 .avatar-placeholder.lg svg { width: 26px; height: 26px; }
@@ -465,6 +545,11 @@ button { font-family: inherit; cursor: pointer; }
    --------------------------------------------------------------------- */
 
 .content { padding: 32px 40px 60px; max-width: 1180px; margin: 0 auto; min-width: 0; }
+
+/* Wider variant for pages that want to actually use a big desktop
+   monitor instead of sitting capped at the standard reading width --
+   e.g. Arcade Info, whose form was forcing too much vertical scroll. */
+.content-wide { max-width: 1760px; }
 
 .page-header {
   display: flex;
@@ -809,15 +894,25 @@ button { font-family: inherit; cursor: pointer; }
    Arcade Info form (and any future owner-editable forms)
    --------------------------------------------------------------------- */
 
-.form-body { padding: 20px 24px 24px; }
+.form-body { padding: 20px 32px 24px; }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 18px 20px;
+  gap: 22px 48px;
 }
 
 .form-grid .field-full { grid-column: 1 / -1; }
+
+/* On big desktop screens, .content-wide gives this page real room --
+   use it to spread fields across a 3rd column instead of just
+   stretching two columns wide, so the form is shorter, not just wider. */
+@media (min-width: 1500px) {
+  .form-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px 56px;
+  }
+}
 
 .field-hint {
   font-size: 11.5px;
@@ -1012,6 +1107,19 @@ button { font-family: inherit; cursor: pointer; }
   gap: 16px;
 }
 
+/* Settings page only: on screens above 1360px, lay the Admin,
+   Operations, and Community panels out side by side instead of
+   stacked -- same panels, same copy, just three columns wide. At
+   1360px and below this stays the plain stacked .settings-stack. */
+@media (min-width: 1361px) {
+  .settings-columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+    gap: 20px;
+  }
+}
+
 .settings-row {
   display: flex;
   align-items: center;
@@ -1200,6 +1308,18 @@ button { font-family: inherit; cursor: pointer; }
 .field input::placeholder,
 .field textarea::placeholder { color: var(--text-faint); }
 
+/* Read-only stand-in for fields that will eventually pull from the
+   Staff Directory instead of being typed in here directly. Same box
+   as a real input, but visually inert -- dashed border, muted text. */
+.field-static {
+  padding: 10px 12px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-faint);
+  font-size: 14px;
+}
+
 .reset-link { font-size: 12px; color: var(--brand); }
 .reset-link:hover { text-decoration: underline; }
 
@@ -1223,6 +1343,7 @@ button { font-family: inherit; cursor: pointer; }
 @media (max-width: 980px) {
   .metric-grid { grid-template-columns: repeat(2, 1fr); }
   .section-grid { grid-template-columns: 1fr; }
+  .profile-columns { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 860px) {
@@ -1237,6 +1358,9 @@ button { font-family: inherit; cursor: pointer; }
     z-index: 30;
     transform: translateX(-100%);
     transition: transform 0.2s ease;
+    /* Off-canvas drawer is detached from the page grid, so on short
+       phone viewports it needs its own scroll to reach every link. */
+    overflow-y: auto;
   }
 
   .sidebar.open { transform: translateX(0); }
@@ -1264,44 +1388,34 @@ button { font-family: inherit; cursor: pointer; }
   margin-top: 18px;
 }
 /* ---------------------------------------------------------------------
-   Profile summary card (0-profile.html)
+   Profile page (0-profile.html)
    --------------------------------------------------------------------- */
 
-.profile-summary {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius);
-  padding: 22px 24px;
-  margin-bottom: 22px;
-  flex-wrap: wrap;
+/* Identity and Employee Details side by side; Security stays outside
+   this and sits full-width below, on its own. align-items: stretch
+   (the grid default) makes both panels match the taller one's height
+   instead of each sizing to its own content. */
+.profile-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: 16px;
 }
 
-.profile-summary-name {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 19px;
-  margin-bottom: 4px;
+/* Security section: a row of not-yet-wired links (Login History,
+   Change Password, MFA) styled on top of .settings-row so it reuses
+   the same panel-row rhythm as Settings, just as an <a> instead of a
+   toggle row. */
+.profile-link-row {
+  color: inherit;
+  cursor: pointer;
 }
 
-.profile-summary-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  font-size: 12.5px;
-  color: var(--text-dim);
-  overflow-wrap: anywhere;
-}
+.profile-link-row:hover { background: var(--surface-hover); }
 
-.role-badge {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--brand);
-  background: var(--brand-tint);
-  border: 1px solid rgba(232, 163, 61, 0.25);
-  padding: 2px 9px;
-  border-radius: 20px;
+.profile-link-chevron {
+  width: 16px;
+  height: 16px;
+  color: var(--text-faint);
+  flex-shrink: 0;
 }
