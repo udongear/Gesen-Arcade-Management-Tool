@@ -544,7 +544,14 @@ button { font-family: inherit; cursor: pointer; }
    Content
    --------------------------------------------------------------------- */
 
-.content { padding: 32px 40px 60px; max-width: 1180px; margin: 0 auto; min-width: 0; }
+/* width: 100% matters here, not just cosmetically -- .main-col is a
+   column flexbox, and this centering margin: 0 auto disables its
+   default cross-axis stretch. Without an explicit width, .content
+   falls back to shrink-to-fit its own children instead of the
+   flexbox's available space, so a wide child (a many-column table)
+   can balloon the whole column past the viewport instead of being
+   contained and scrolling internally. */
+.content { width: 100%; padding: 32px 40px 60px; max-width: 1180px; margin: 0 auto; min-width: 0; }
 
 /* Wider variant for pages that want to actually use a big desktop
    monitor instead of sitting capped at the standard reading width --
@@ -742,6 +749,8 @@ button { font-family: inherit; cursor: pointer; }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border-soft);
 }
@@ -1125,6 +1134,14 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   justify-content: space-between;
   gap: 20px;
+  /* A floor, not a cap -- short descriptions get padded up to this so
+     rows line up across the Admin/Operations/Community columns instead
+     of each one being exactly as tall as its own text. Longer text
+     doesn't push past it either, since .settings-row-desc below is
+     clamped to 2 lines; flex-wrap still lets the row grow taller than
+     this on the narrow single-column mobile layout, where the controls
+     wrap onto their own line. */
+  min-height: 96px;
   padding: 16px 20px;
   border-bottom: 1px solid var(--border-soft);
   scroll-margin-top: 90px;
@@ -1151,6 +1168,14 @@ button { font-family: inherit; cursor: pointer; }
   font-size: 12.5px;
   color: var(--text-dim);
   max-width: 480px;
+  /* Caps at 2 lines with an ellipsis instead of growing the row --
+     pairs with .settings-row's min-height so row height stays fixed
+     regardless of how long the copy runs. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .settings-row-controls {
@@ -1418,4 +1443,414 @@ button { font-family: inherit; cursor: pointer; }
   height: 16px;
   color: var(--text-faint);
   flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Staff — Directory, Roles, Access Levels (1-staff.html)
+   --------------------------------------------------------------------- */
+
+.table-scroll { overflow-x: auto; }
+
+/* Staff + Roles tables have too many columns to fit most screens.
+   Without this, .wo-table's default wrapping cells let the browser
+   satisfy width:100% by squeezing/wrapping trailing columns down to
+   nothing instead of growing past the container and scrolling --
+   nowrap forces the table past its container so .table-scroll's
+   horizontal scrollbar actually kicks in, same as .access-matrix. */
+.staff-table th, .staff-table td,
+.roles-table th, .roles-table td,
+.cabinets-table th, .cabinets-table td { white-space: nowrap; }
+
+.col-actions { text-align: right; }
+
+.row-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.btn-icon:hover { background: var(--surface-hover); color: var(--text); }
+.btn-icon svg { width: 14px; height: 14px; }
+
+.btn-icon.danger:hover {
+  color: var(--bad);
+  background: var(--bad-tint);
+  border-color: rgba(226, 86, 79, 0.3);
+}
+
+/* Sortable column headers — plain button styled to look like the th
+   text it sits inside, with a chevron that highlights + flips when
+   that column is the active sort. */
+.sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
+.sort-btn:hover { color: var(--text); }
+
+.sort-btn svg {
+  width: 11px;
+  height: 11px;
+  color: var(--text-faint);
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.sort-btn.sort-asc svg { color: var(--brand); }
+.sort-btn.sort-desc svg { color: var(--brand); transform: rotate(180deg); }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.chip-remove {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 4px 2px 9px;
+  border-radius: 20px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.chip-remove button {
+  background: none;
+  border: none;
+  color: var(--text-faint);
+  padding: 2px 4px;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chip-remove button:hover { color: var(--bad); }
+
+.status-pill.status-pending { color: var(--warn); background: var(--warn-tint); }
+.status-pill.status-inactive { color: var(--text-faint); background: var(--surface-raised); }
+.status-pill.status-repair { color: var(--warn); background: var(--warn-tint); }
+.status-pill.status-out-of-service { color: var(--bad); background: var(--bad-tint); }
+.status-pill.status-retired { color: var(--text-faint); background: var(--surface-raised); }
+
+/* Cabinet Image -- same rounded-square idiom as .logo-mark, at table-row
+   and modal-preview sizes. Square rather than .avatar-placeholder's
+   circle since a cabinet isn't a person. */
+.cabinet-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.cabinet-thumb svg { width: 18px; height: 18px; }
+.cabinet-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.cabinet-thumb.lg { width: 72px; height: 72px; }
+.cabinet-thumb.lg svg { width: 32px; height: 32px; }
+
+.checkbox-group { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+
+.checkbox-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface-raised);
+  font-size: 12.5px;
+  color: var(--text-dim);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-pill input { margin: 0; accent-color: var(--brand); }
+
+.checkbox-pill:has(input:checked),
+.checkbox-pill.checked {
+  border-color: var(--brand);
+  color: var(--text);
+  background: var(--brand-tint);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.pagination-info { font-size: 12px; color: var(--text-faint); }
+
+.pagination-pages { display: flex; align-items: center; gap: 4px; }
+
+.page-btn {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.page-btn:hover { background: var(--surface-hover); color: var(--text); }
+
+.page-btn.active {
+  background: var(--brand-tint);
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.page-btn:disabled:hover { background: var(--surface-raised); color: var(--text-dim); }
+
+/* Modal — Add/Edit Staff, Add Role */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  width: 100%;
+  max-width: 640px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.modal-sm { max-width: 420px; }
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border-soft);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+}
+
+.modal-head h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  margin: 0;
+}
+
+.modal-close { color: var(--text-dim); }
+.modal-close:hover { color: var(--text); }
+
+.modal-body { padding: 20px 22px; }
+
+.modal-body .form-grid { grid-template-columns: repeat(2, 1fr); gap: 16px 24px; }
+
+.btn-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--brand);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.btn-link:hover { text-decoration: underline; }
+
+.text-link { color: var(--brand); font-weight: 600; }
+.text-link:hover { text-decoration: underline; }
+
+/* Add/Edit Staff modal — validation summary, hidden until a submit
+   attempt is missing something. */
+.form-error {
+  display: none;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--bad-tint);
+  border: 1px solid rgba(226, 86, 79, 0.3);
+  border-radius: var(--radius-sm);
+  color: var(--bad);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+}
+
+.form-error.show { display: flex; }
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 22px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* Roles — assignment control per row */
+.assign-cell { min-width: 220px; }
+
+.assign-row { display: flex; gap: 8px; }
+
+.assign-row select {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.assign-error {
+  font-size: 11.5px;
+  color: var(--bad);
+  margin-top: 6px;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  transition: opacity 0.2s ease;
+}
+
+.assign-error.show { opacity: 1; height: auto; }
+
+/* Access matrix — permissions run down the rows, roles run across the
+   columns. Green/filled = granted, grey/hollow = revoked. The leading
+   corner cell is left blank on purpose, and the column headers read
+   like the row labels (same size/weight, no caps/letter-spacing)
+   instead of the standard tiny-caps table header. */
+.access-matrix th, .access-matrix td { text-align: center; white-space: nowrap; }
+.access-matrix th:first-child, .access-matrix td:first-child { text-align: left; white-space: normal; }
+
+.access-matrix th {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text);
+}
+
+.access-perm-label { font-weight: 500; }
+
+.access-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.access-mark.allowed { background: var(--good-tint); color: var(--good); }
+.access-mark.revoked { background: var(--surface-raised); color: var(--text-faint); }
+
+/* Same shape as .access-mark, but a real button for Edit mode --
+   clicking one toggles that role's access to that permission. */
+.access-mark-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.1s ease, filter 0.15s ease;
+}
+
+.access-mark-btn.allowed { background: var(--good-tint); color: var(--good); border-color: rgba(79, 180, 119, 0.35); }
+.access-mark-btn.revoked { background: var(--surface-raised); color: var(--text-faint); border-color: var(--border); }
+.access-mark-btn:hover { filter: brightness(1.2); transform: scale(1.08); }
+.access-mark-btn:active { transform: scale(0.94); }
+
+/* Section label rows (Admin / Operations / Community) that break up
+   the permission list, echoing the sidebar's own nav groupings. */
+.access-group-row td {
+  padding: 10px 20px 6px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  background: var(--surface-raised);
+  border-bottom: 1px dashed var(--border);
+}
+
+.panel-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .modal-body .form-grid { grid-template-columns: 1fr; }
 }

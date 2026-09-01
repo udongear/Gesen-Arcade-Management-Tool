@@ -140,26 +140,154 @@
       </div>
     </header>
 
-    <main class="content">
+    <main class="content content-wide">
     <div class="page-header">
       <div>
         <p class="eyebrow">Admin</p>
         <h1>Staff</h1>
+        <p class="page-sub">Directory and roles for everyone working across your arcades.</p>
       </div>
     </div>
 
-    <div class="empty-state">
-      <div class="empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.5 3-6.3 6.5-6.3s6.5 2.8 6.5 6.3"/><circle cx="17" cy="8.5" r="2.6"/><path d="M15.5 13.6c2.7.5 4.7 2.8 4.7 5.6"/></svg>
+    <!-- =================================================================
+         Directory
+         ================================================================= -->
+    <div class="panel" id="directoryPanel">
+      <div class="panel-head">
+        <h2>Directory</h2>
+        <div class="panel-head-actions">
+          <button type="button" class="btn-secondary" id="exportStaffBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;margin-right:6px;vertical-align:-2px"><path d="M12 3v12m0 0-4-4m4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            Export to CSV
+          </button>
+          <button type="button" class="btn-save" id="addStaffBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            Add New Staff
+          </button>
+        </div>
       </div>
-      <h2>Your team, all in one place</h2>
-      <p>Staff directory, technician coverage, ticket resolution time, and work orders closed will live here once data starts flowing in from the Operations.</p>
-      <a href="0-settings.html#staff" class="btn-enable">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        Enable This
-      </a>
+      <div class="table-scroll">
+        <table class="wo-table staff-table" id="staffTable">
+          <thead>
+            <tr>
+              <th><button type="button" class="sort-btn" data-sort="staffId">Staff ID <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></button></th>
+              <th><button type="button" class="sort-btn" data-sort="name">Full Name <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></button></th>
+              <th><button type="button" class="sort-btn" data-sort="jobTitle">Job Title <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></button></th>
+              <th><button type="button" class="sort-btn" data-sort="status">Status <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></button></th>
+              <th><button type="button" class="sort-btn" data-sort="startDate">Start Date <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></button></th>
+              <th>Manager</th>
+              <th>Work Locations</th>
+              <th>Specialties</th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="staffTableBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="staffPagination"></div>
     </div>
+
+    <!-- =================================================================
+         Roles
+         ================================================================= -->
+    <div class="panel" style="margin-top:20px">
+      <div class="panel-head">
+        <h2>Roles</h2>
+      </div>
+      <p style="margin:0;padding:0 20px 14px;font-size:12.5px;color:var(--text-dim);line-height:1.5"><br>Role permissions can be edited under <a href="0-settings.html#accessLevelsPanel" class="text-link">⚙️ Settings</a>.</p>
+      <div class="table-scroll">
+        <table class="wo-table roles-table" id="rolesTable">
+          <thead>
+            <tr>
+              <th>Role Name</th>
+              <th>Assigned Staff</th>
+              <th>Assignment</th>
+            </tr>
+          </thead>
+          <tbody id="rolesTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
   </main>
+  </div>
+</div>
+
+<!-- =====================================================================
+     Add / Edit Staff modal
+     ===================================================================== -->
+<div class="modal-overlay" id="staffModalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="staffModalTitle">
+    <div class="modal-head">
+      <h2 id="staffModalTitle">Add New Staff</h2>
+      <button type="button" class="sidebar-close modal-close" id="staffModalClose" aria-label="Close">✕</button>
+    </div>
+    <form id="staffForm" novalidate>
+      <div class="modal-body">
+        <div class="form-error" id="staffFormError"></div>
+        <div class="form-grid">
+
+          <div class="field">
+            <label for="staffIdInput">Staff ID</label>
+            <input type="text" id="staffIdInput" required>
+          </div>
+
+          <div class="field">
+            <label for="staffNameInput">Full Name</label>
+            <input type="text" id="staffNameInput" required>
+          </div>
+
+          <div class="field">
+            <label for="staffTitleInput">Job Title</label>
+            <input type="text" id="staffTitleInput" required>
+          </div>
+
+          <div class="field">
+            <label for="staffStatusInput">Status</label>
+            <select id="staffStatusInput" required>
+              <option value="active">Active</option>
+              <option value="pending">Pending</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="staffStartInput">Start Date</label>
+            <input type="date" id="staffStartInput" required>
+          </div>
+
+          <div class="field">
+            <label for="staffManagerInput">Manager</label>
+            <select id="staffManagerInput" required></select>
+          </div>
+
+          <div class="field field-full">
+            <div class="field-label-row">
+              <label>Work Locations</label>
+              <button type="button" class="btn-link js-select-all" data-target="staffLocationsGroup">Add to all</button>
+            </div>
+            <div class="checkbox-group" id="staffLocationsGroup"></div>
+          </div>
+
+          <div class="field field-full">
+            <div class="field-label-row">
+              <label>Specialties</label>
+              <button type="button" class="btn-link js-select-all" data-target="staffSpecialtiesGroup">Add to all</button>
+            </div>
+            <div class="checkbox-group" id="staffSpecialtiesGroup"></div>
+            <div class="field-hint">Helps with auto-assigning work orders. Select all that apply.</div>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="staffModalCancel">Cancel</button>
+        <button type="submit" class="btn-save">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+          Save Staff
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 

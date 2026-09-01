@@ -140,7 +140,7 @@
       </div>
     </header>
 
-    <main class="content">
+    <main class="content content-wide">
     <div class="page-header">
       <div>
         <p class="eyebrow">Configuration</p>
@@ -192,12 +192,12 @@
         <div class="settings-row" id="staff">
           <div class="settings-row-main">
             <div class="settings-row-title">Staff</div>
-            <div class="settings-row-desc">Staff directory, technician coverage, and ticket resolution time.</div>
+            <div class="settings-row-desc">Staff directory and roles — who's on your team, their info, and who's assigned to what.</div>
           </div>
           <div class="settings-row-controls">
-            <span class="badge-unavailable">Coming Soon</span>
-            <label class="switch disabled">
-              <input type="checkbox" disabled>
+            <span class="badge-available">Enabled</span>
+            <label class="switch">
+              <input type="checkbox" id="staffToggle" data-feature="staff" checked>
               <span class="switch-track"><span class="switch-thumb"></span></span>
             </label>
           </div>
@@ -220,7 +220,7 @@
         <div class="settings-row" id="arcade-info">
           <div class="settings-row-main">
             <div class="settings-row-title">Arcade Info</div>
-            <div class="settings-row-desc">Identity, location, and operations details owners can fill in for each arcade they run.</div>
+            <div class="settings-row-desc">Identity, location, and operations details, iuncluding website color theme.</div>
           </div>
           <div class="settings-row-controls">
             <span class="badge-available">Enabled</span>
@@ -238,12 +238,12 @@
         <div class="settings-row" id="cabinets">
           <div class="settings-row-main">
             <div class="settings-row-title">Cabinets</div>
-            <div class="settings-row-desc">Fleet-wide rollup of status, uptime, value, and age for every cabinet.</div>
+            <div class="settings-row-desc">View the status and information for every arcade cabinet. </div>
           </div>
           <div class="settings-row-controls">
-            <span class="badge-unavailable">Coming Soon</span>
-            <label class="switch disabled">
-              <input type="checkbox" disabled>
+            <span class="badge-available">Enabled</span>
+            <label class="switch">
+              <input type="checkbox" id="cabinetsToggle" data-feature="cabinets" checked>
               <span class="switch-track"><span class="switch-thumb"></span></span>
             </label>
           </div>
@@ -252,7 +252,7 @@
         <div class="settings-row" id="play-cards">
           <div class="settings-row-main">
             <div class="settings-row-title">Play Cards</div>
-            <div class="settings-row-desc">Card balances, replacements, merges, and refunds for player accounts.</div>
+            <div class="settings-row-desc">Card purchases, balances, and replacements for player accounts. IC card management also managed here.</div>
           </div>
           <div class="settings-row-controls">
             <span class="badge-unavailable">Coming Soon</span>
@@ -280,7 +280,7 @@
         <div class="settings-row" id="work-orders">
           <div class="settings-row-main">
             <div class="settings-row-title">Work Orders</div>
-            <div class="settings-row-desc">Repair ticket queue — log, assign, and resolve issues from the floor.</div>
+            <div class="settings-row-desc">Repair ticket queue for cabinets — log, assign, and resolve issues from the floor.</div>
           </div>
           <div class="settings-row-controls">
             <span class="badge-unavailable">Coming Soon</span>
@@ -325,7 +325,7 @@
         <div class="settings-row" id="meetups">
           <div class="settings-row-main">
             <div class="settings-row-title">Meetups</div>
-            <div class="settings-row-desc">Lets players plan or announce meetups at the arcade.</div>
+            <div class="settings-row-desc">Organize and manage events at the arcade, and see what meetups are planned by members.</div>
           </div>
           <div class="settings-row-controls">
             <span class="badge-unavailable">Coming Soon</span>
@@ -338,7 +338,7 @@
         <div class="settings-row" id="leaderboards">
           <div class="settings-row-main">
             <div class="settings-row-title">Leaderboards</div>
-            <div class="settings-row-desc">Live rankings for specific games and machines.</div>
+            <div class="settings-row-desc">Live rankings for specific games, machines, and previous tournaments.</div>
           </div>
           <div class="settings-row-controls">
             <span class="badge-unavailable">Coming Soon</span>
@@ -364,7 +364,7 @@
         <div class="settings-row" id="suggestion-board">
           <div class="settings-row-main">
             <div class="settings-row-title">Suggestion Board</div>
-            <div class="settings-row-desc">Feedback board for the arcade, website, or mobile app.</div>
+            <div class="settings-row-desc">Feedback board for the arcade, website, or mobile app. Not publicly visible.</div>
           </div>
           <div class="settings-row-controls">
             <span class="badge-unavailable">Coming Soon</span>
@@ -377,6 +377,33 @@
       </div>
 
     </div>
+
+    <!-- =================================================================
+         Access Levels — moved here from the Staff page. Read-only
+         reference chart for now; real per-role toggles will live here
+         once they're wired up.
+         ================================================================= -->
+    <div class="panel" id="accessLevelsPanel" style="margin-top:20px;scroll-margin-top:90px">
+      <div class="panel-head">
+        <h2>Access Levels</h2>
+        <div class="panel-head-actions">
+          <span class="save-status" id="accessSaveStatus">Saved</span>
+          <button type="button" class="btn-secondary" id="accessCancelBtn" style="display:none">Cancel</button>
+          <button type="button" class="btn-secondary" id="accessEditBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;margin-right:6px;vertical-align:-2px"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            Edit
+          </button>
+        </div>
+      </div>
+      <p id="accessHint" style="margin:0;padding:0 20px 14px;font-size:12.5px;color:var(--text-dim);line-height:1.5">Reference chart for what each role can access across the app. Custom roles coming soon.</p>
+      <div class="table-scroll">
+        <table class="wo-table access-matrix" id="accessMatrixTable">
+          <thead id="accessMatrixHead"></thead>
+          <tbody id="accessMatrixBody"></tbody>
+        </table>
+      </div>
+    </div>
+
   </main>
   </div>
 </div>

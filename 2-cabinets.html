@@ -141,26 +141,138 @@
       </div>
     </header>
 
-    <main class="content">
+    <main class="content content-wide">
     <div class="page-header">
       <div>
         <p class="eyebrow">Operations</p>
         <h1>Cabinets</h1>
+        <p class="page-sub">Your full cabinet fleet &mdash; status, value, and age, in one place.</p>
       </div>
     </div>
 
-    <div class="empty-state">
-      <div class="empty-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h2"/></svg>
+    <!-- =================================================================
+         Directory
+         ================================================================= -->
+    <div class="panel" id="cabinetsPanel">
+      <div class="panel-head">
+        <h2>Directory</h2>
+        <button type="button" class="btn-save" id="addCabinetBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Add New Cabinet
+        </button>
       </div>
-      <h2>Your full cabinet fleet, in one place</h2>
-      <p>A rollup of every cabinet you own &mdash; status, uptime, value, and age &mdash; across all of your locations. Detailed per-machine editing, maintenance logs, and floor status will live here once work order data starts flowing in.</p>
-      <a href="0-settings.html#cabinets" class="btn-enable">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        Enable This
-      </a>
+      <div class="table-scroll">
+        <table class="wo-table cabinets-table" id="cabinetsTable">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th><button type="button" class="sort-btn" data-sort="cabinetId">Cabinet ID <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></button></th>
+              <th><button type="button" class="sort-btn" data-sort="name">Name <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></button></th>
+              <th><button type="button" class="sort-btn" data-sort="category">Category <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></button></th>
+              <th><button type="button" class="sort-btn" data-sort="status">Status <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></button></th>
+              <th><button type="button" class="sort-btn" data-sort="purchaseDate">Purchase Date <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></button></th>
+              <th><button type="button" class="sort-btn" data-sort="value">Value <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></button></th>
+              <th class="col-actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="cabinetsTableBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="cabinetsPagination"></div>
     </div>
+
   </main>
+  </div>
+</div>
+
+<!-- =====================================================================
+     Add / Edit Cabinet modal
+     ===================================================================== -->
+<div class="modal-overlay" id="cabinetModalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cabinetModalTitle">
+    <div class="modal-head">
+      <h2 id="cabinetModalTitle">Add New Cabinet</h2>
+      <button type="button" class="sidebar-close modal-close" id="cabinetModalClose" aria-label="Close">✕</button>
+    </div>
+    <form id="cabinetForm" novalidate>
+      <div class="modal-body">
+        <div class="form-error" id="cabinetFormError"></div>
+        <div class="form-grid">
+
+          <div class="field field-full">
+            <label for="cabinetImage">Cabinet Image</label>
+            <div class="logo-upload">
+              <span class="cabinet-thumb lg js-cabinet-image" id="cabinetImagePreview" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h6M9 11h6M9 15h2"/></svg>
+              </span>
+              <div class="logo-upload-actions">
+                <label class="btn-secondary" for="cabinetImage">Upload photo</label>
+                <input type="file" id="cabinetImage" name="cabinetImage" accept="image/*" class="visually-hidden">
+                <button type="button" class="btn-text-danger" id="removeCabinetImageBtn" style="display:none">Remove photo</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="cabinetIdInput">Cabinet ID</label>
+            <input type="text" id="cabinetIdInput" required>
+          </div>
+
+          <div class="field">
+            <label for="cabinetNameInput">Name</label>
+            <input type="text" id="cabinetNameInput" placeholder="e.g. DDR A20 PLUS" required>
+          </div>
+
+          <div class="field">
+            <label for="cabinetCategoryInput">Category</label>
+            <select id="cabinetCategoryInput" required></select>
+          </div>
+
+          <div class="field">
+            <label for="cabinetStatusInput">Status</label>
+            <select id="cabinetStatusInput" required></select>
+          </div>
+
+          <div class="field">
+            <label for="cabinetPurchaseDateInput">Purchase Date</label>
+            <input type="date" id="cabinetPurchaseDateInput" required>
+          </div>
+
+          <div class="field">
+            <label for="cabinetValueInput">Value</label>
+            <input type="number" id="cabinetValueInput" min="0" step="1" placeholder="0" required>
+          </div>
+
+          <div class="field">
+            <label for="cabinetVendorInput">Vendor</label>
+            <input type="text" id="cabinetVendorInput" placeholder="Optional">
+          </div>
+
+          <div class="field">
+            <label for="cabinetSerialInput">Serial Number</label>
+            <input type="text" id="cabinetSerialInput" placeholder="Optional">
+          </div>
+
+          <div class="field">
+            <label for="cabinetLastServicedInput">Last Serviced</label>
+            <input type="date" id="cabinetLastServicedInput">
+          </div>
+
+          <div class="field field-full">
+            <label for="cabinetNotesInput">Notes</label>
+            <textarea id="cabinetNotesInput" rows="3" placeholder="Optional"></textarea>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" id="cabinetModalCancel">Cancel</button>
+        <button type="submit" class="btn-save">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+          Save Cabinet
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 
